@@ -51,7 +51,7 @@ def create_app():
         Devuelve un texto plano con el tipo MIME `text/plain`
         """
         # Implementa este endpoint para devolver el contenido solicitado
-        pass
+        return "Este es un texto plano", 200, {'Content-Type': 'text/plain'}
 
     @app.route('/html', methods=['GET'])
     def get_html():
@@ -59,15 +59,14 @@ def create_app():
         Devuelve un fragmento HTML con el tipo MIME `text/html`
         """
         # Implementa este endpoint para devolver el contenido solicitado
-        pass
-
+        return "<h1>Este es un fragmento HTML</h1>", 200, {'Content-Type': 'text/html'}
     @app.route('/json', methods=['GET'])
     def get_json():
         """
         Devuelve un objeto JSON con el tipo MIME `application/json`
         """
         # Implementa este endpoint para devolver el contenido solicitado
-        pass
+        return jsonify({"mensaje": "Este es un objeto JSON"})
 
     @app.route('/xml', methods=['GET'])
     def get_xml():
@@ -75,7 +74,7 @@ def create_app():
         Devuelve un documento XML con el tipo MIME `application/xml`
         """
         # Implementa este endpoint para devolver el contenido solicitado
-        pass
+        return "<mensaje>Este es un documento XML</mensaje>", 200, {'Content-Type': 'application/xml'}
 
     @app.route('/image', methods=['GET'])
     def get_image():
@@ -84,7 +83,12 @@ def create_app():
         """
         # Implementa este endpoint para devolver el contenido solicitado
         # Sugerencia: Puedes usar send_file para enviar una imagen
-        pass
+        array = np.random.randint(0, 255, size=(100, 100, 3), dtype=np.uint8)
+        img = Image.fromarray(array)
+        img_io = io.BytesIO()
+        img.save(img_io, 'PNG')
+        img_io.seek(0)
+        return send_file(img_io, mimetype='image/png')
 
     @app.route('/binary', methods=['GET'])
     def get_binary():
@@ -94,7 +98,11 @@ def create_app():
         """
         # Implementa este endpoint para devolver el contenido solicitado
         # Sugerencia: Puedes usar os.urandom() para generar datos aleatorios
-        pass
+        binary_data = os.urandom(1024)
+        response = make_response(binary_data)
+        response.headers.set('Content-Type', 'application/octet-stream')
+        response.headers.set('Content-Disposition', 'attachment; filename=random.bin')
+        return response
 
     return app
 
