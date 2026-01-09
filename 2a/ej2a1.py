@@ -32,7 +32,16 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         # 1. Verifica la ruta solicitada (self.path)
         # 2. Si la ruta es "/", envía una respuesta 200 con el mensaje "¡Hola mundo!"
         # 3. Si la ruta es cualquier otra, envía una respuesta 404
-        pass
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write("¡Hola mundo!".encode())
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+
 
 
 def create_server(host="localhost", port=8000):
