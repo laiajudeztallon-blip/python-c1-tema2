@@ -33,7 +33,8 @@ def create_app():
         """
         # Utiliza render_template_string para renderizar la plantilla con el nombre proporcionado:
 
-        pass
+        return render_template_string(TEMPLATE, nombre=nombre)
+
 
     return app
 
