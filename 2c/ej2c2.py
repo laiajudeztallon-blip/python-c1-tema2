@@ -46,7 +46,7 @@ def create_app():
         Devuelve la lista completa de tareas
         """
         # Implementa este endpoint
-        pass
+        return jsonify(tasks)
 
     @app.route('/tasks', methods=['POST'])
     def add_task():
@@ -55,15 +55,25 @@ def create_app():
         El cuerpo de la solicitud debe incluir un JSON con el campo "name"
         """
         # Implementa este endpoint
-        pass
-
+        global next_id
+        data = request.get_json()
+        if not data or 'name' not in data:
+            return jsonify({"error": "Missing name field"}), 400
+        task = {"id": next_id, "name": data["name"]}
+        tasks.append(task)
+        next_id += 1
+        return jsonify(task), 201
     @app.route('/tasks/<int:task_id>', methods=['DELETE'])
     def delete_task(task_id):
         """
         Elimina una tarea específica por su ID
         """
         # Implementa este endpoint
-        pass
+        for i, task in enumerate(tasks):
+            if task["id"] == task_id:
+                tasks.pop(i)
+                return jsonify({"message": "Task deleted"}), 200
+        return jsonify({"error": "Task not found"}), 404
 
     @app.route('/tasks/<int:task_id>', methods=['PUT'])
     def update_task(task_id):
@@ -73,7 +83,15 @@ def create_app():
         Código de estado: 200 - OK si se actualizó, 404 - Not Found si no existe
         """
         # Implementa este endpoint
-        pass
+        data = request.get_json()
+        if not data or 'name' not in data:
+            return jsonify({"error": "Missing name field"}), 400
+
+        for task in tasks:
+            if task["id"] == task_id:
+                task["name"] = data["name"]
+                return jsonify(task), 200
+        return jsonify({"error": "Task not found"}), 404
 
     return app
 
