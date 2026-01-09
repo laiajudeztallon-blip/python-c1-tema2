@@ -38,7 +38,15 @@ def create_app():
         - Si el ID es > 100: abort con código 404 (Not Found)
         """
         # Implementa este endpoint utilizando abort() según las condiciones
-        pass
+         try:
+            id = int(resource_id)
+            if id <= 0:
+                abort(400)
+            if id > 100:
+                abort(404)
+            return f"Resource {id} details", 200
+        except ValueError:
+            abort(400)
 
     @app.route('/admin', methods=['GET'])
     def admin():
@@ -49,7 +57,12 @@ def create_app():
         - Si la clave no es 'secret123': abort con código 403 (Forbidden)
         """
         # Implementa este endpoint utilizando abort() según las condiciones
-        pass
+        key = request.args.get('key')
+        if not key:
+            abort(401)
+        if key != 'secret123':
+            abort(403)
+        return "Welcome to admin panel", 200
 
     return app
 
