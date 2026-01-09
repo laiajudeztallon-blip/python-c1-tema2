@@ -67,7 +67,16 @@ class ProductAPIHandler(BaseHTTPRequestHandler):
         #    a. Convierte el producto a XML usando dict_to_xml y prettify
         #    b. Devuelve el XML con código 200 y Content-Type application/xml
         # 5. Si el producto no existe, devuelve un mensaje de error XML con código 404
-        pass
+        from http.server import HTTPServer, BaseHTTPRequestHandler
+import re
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+# Lista de productos predefinida
+products = [
+    {"id": 1, "name": "Laptop", "price": 999.99},
+    {"id": 2, "name": "Smartphone", "price": 699.99},
+    {"id": 3, "name": "Tablet", "price": 349.99}
 
 def create_server(host="localhost", port=8000):
     """
