@@ -66,7 +66,39 @@ def create_app():
         #    - El sistema operativo (Windows, macOS, Android, iOS, etc.)
         #    - Si es un dispositivo móvil (detecta cadenas como "Mobile", "Android", "iPhone")
         # 3. Devuelve la información como respuesta JSON
-        pass
+        user_agent = request.headers.get('User-Agent', '')
+
+        # Detect browser
+        browser = 'Unknown'
+        if 'Chrome' in user_agent and 'Safari' in user_agent:
+            browser = 'Chrome'
+        elif 'Firefox' in user_agent:
+            browser = 'Firefox'
+        elif 'Safari' in user_agent:
+            browser = 'Safari'
+
+        # Detect OS
+        os = 'Unknown'
+        if 'Windows' in user_agent:
+            os = 'Windows'
+        elif 'iPhone' in user_agent or 'iOS' in user_agent:
+            os = 'iOS'
+        elif 'Android' in user_agent:
+            os = 'Android'
+        elif 'Mac OS' in user_agent:
+            os = 'macOS'
+        elif 'Linux' in user_agent:
+            os = 'Linux'
+
+        # Detect if mobile
+        is_mobile = any(mobile_term in user_agent for mobile_term in ['Mobile', 'Android', 'iPhone', 'iPad', 'Windows Phone'])
+
+        return jsonify({
+            'browser': browser,
+            'os': os,
+            'is_mobile': is_mobile
+        })
+
 
     @app.route('/echo', methods=['POST'])
     def echo():
@@ -81,7 +113,14 @@ def create_app():
         #    - Para form data: usa request.form
         #    - Para texto plano: usa request.data
         # 3. Devuelve los mismos datos con el mismo tipo de contenido
-        pass
+        content_type = request.content_type
+
+        if 'application/json' in content_type:
+            return jsonify(request.get_json())
+        elif 'application/x-www-form-urlencoded' in content_type:
+            return dict(request.form)
+        elif 'text/plain' in content_type:
+            return request.data.decode(), 200, {'Content-Type': 'text/plain'}
 
     @app.route('/validate-id', methods=['POST'])
     def validate_id():
@@ -95,7 +134,20 @@ def create_app():
         # 1. Obtén el campo "id_number" del JSON enviado
         # 2. Valida que cumpla con las reglas especificadas
         # 3. Devuelve un JSON con el resultado de la validación
-        pass
+        data = request.get_json()
+        if not data or 'id_number' not in data:
+            return jsonify({"error": "Missing id_number field"}), 400
+
+        id_number = data['id_number']
+
+        # Check all validation rules
+        is_valid = (
+            len(id_number) == 9 and
+            id_number[:8].isdigit() and
+            id_number[8].isalpha()
+        )
+
+        return jsonify({"valid": is_valid})
 
     return app
 
