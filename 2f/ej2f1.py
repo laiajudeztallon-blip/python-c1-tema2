@@ -34,16 +34,31 @@ def create_app():
 
     # Define las rutas para el blueprint 'main'
     # Implementa las rutas '/' y '/about' para el blueprint 'main'
+ @main_blueprint.route('/')
+    def home():
+        return "Bienvenida a esta aplicación Flask con Blueprints"
+
+    @main_blueprint.route('/about')
+    def about():
+        return "Esta es una aplicación de ejemplo que demuestra el uso de Blueprints en Flask"
 
     # Crea el blueprint 'user'
     user_blueprint = Blueprint('user', __name__)
 
     # Define las rutas para el blueprint 'user'
     # Implementa las rutas '/user/profile/<username>' y '/user/list' para el blueprint 'user'
+    @user_blueprint.route('/profile/<username>')
+    def user_profile(username):
+        return f"Perfil del usuario: {username}"
 
+    @user_blueprint.route('/list')
+    def user_list():
+        users = ["user1", "user2", "user3", "user4"]
+        return "Lista de usuarios: " + ", ".join(users)
     # Registra los blueprints con un prefijo de URL '/api/v1'
     # Usa app.register_blueprint() con el parámetro url_prefix
-
+    app.register_blueprint(main_blueprint, url_prefix='/api/v1')
+    app.register_blueprint(user_blueprint, url_prefix='/api/v1/user')
     return app
 
 if __name__ == '__main__':
